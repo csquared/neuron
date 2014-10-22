@@ -6,17 +6,17 @@ import (
 	"path/filepath"
 )
 
-func resolveKeys(envDir, cmdKey string) (string, string) {
+func appName() string {
 	workingDir, err := os.Getwd()
 	if err != nil {
 		log.Fatal(err)
 	}
 
-	if envDir == "" || cmdKey == "" {
-		log.Fatal("you need to supply arguments")
-	}
+	return filepath.Base(workingDir)
+}
 
-	appName := filepath.Base(workingDir)
+func resolveKeys(envDir, cmdKey string) (string, string) {
+	appName := appName()
 
 	if envDir[0] != '/' {
 		envDir = "/services/" + appName + "/envs/" + envDir

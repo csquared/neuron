@@ -32,15 +32,6 @@ func getEnv(c *etcd.Client, name string) (env Env) {
 	return
 }
 
-func watchEnv(c *etcd.Client, name string) bool {
-	watchChan := make(chan *etcd.Response)
-	go c.Watch(name, 0, true, watchChan, nil)
-	log.Println("Waiting for an update...")
-	r := <-watchChan
-	log.Printf("Got updated env: %s\n", r.Node.Key)
-	return true
-}
-
 //thanks ddollar!
 func (e *Env) asArray() (env []string) {
 	for _, pair := range os.Environ() {
