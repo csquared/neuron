@@ -28,11 +28,4 @@ func spawnProc(env Env, command string) *exec.Cmd {
 		log.Fatal(err)
 	}
 	return cmd
-	/*
-		log.Printf("Waiting for command to finish...")
-		err = cmd.Wait()
-		if err != nil {
-			log.Printf("Command finished with error: %v", err)
-		}
-	*/
 }
