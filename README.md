@@ -20,11 +20,11 @@ A call to
 
     neuron -env=dev -cmd=web
 
-is like calling:
+in the directory `foo-service` is like calling:
 
     /bin/sh -c "bundle exec puma -p $PORT -w 2 -t 12:16"
 
-with an ENV of
+in that directory with an ENV of
 
     PORT="5000"
     DATABASE_URL="postgres:///foo-service"
