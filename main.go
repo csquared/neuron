@@ -27,7 +27,7 @@ func main() {
 	client := etcd.NewClient([]string{etcdUrl})
 
 	if flag.Arg(0) == "bootstrap" {
-		bootstrap(client, flag.Arg(1))
+		Bootstrap(client, flag.Arg(1))
 		return
 	}
 
