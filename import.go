@@ -12,9 +12,6 @@ func Import(c *etcd.Client) {
 	appName := appName()
 
 	_, err := c.SetDir("/services/"+appName+"/processes", 0)
-	if err != nil {
-		log.Fatal(err)
-	}
 
 	//add processes from procfile
 	if _, err := os.Stat("Procfile"); err == nil {
@@ -34,9 +31,6 @@ func Import(c *etcd.Client) {
 
 	//let's import .env to dev
 	_, err = c.SetDir("/services/"+appName+"/envs/dev", 0)
-	if err != nil {
-		log.Fatal(err)
-	}
 	_, err = c.Set("/services/"+appName+"/envs/dev/PORT", "5000", 0)
 	if err != nil {
 		log.Fatal(err)
