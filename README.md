@@ -50,3 +50,13 @@ restart process - useful for development or tuning params
 if this is not set, neuron crashes and assumes your process
 manager will reboot it. when your system restarts the
 neuron process it will have the new ENV 
+
+## other commands
+
+### neuron import
+
+Loads Procfile and .env files into etcd
+
+### neuron bootstrap
+
+Creates directories and single web process in etcd
