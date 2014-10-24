@@ -3,11 +3,12 @@ package main
 import (
 	"bufio"
 	"fmt"
-	_ "github.com/kr/pretty"
 	"io"
 	"math"
 	"os"
 	"regexp"
+
+	_ "github.com/kr/pretty"
 )
 
 var procfileEntryRegexp = regexp.MustCompile("^([A-Za-z0-9_]+):\\s*(.+)$")
