@@ -1,7 +1,6 @@
 package main
 
 import (
-	"io"
 	"log"
 	"os"
 	"os/exec"
@@ -12,18 +11,11 @@ func spawnProc(env Env, command string) *exec.Cmd {
 
 	cmd := exec.Command("/bin/sh", "-c", command)
 	cmd.Env = env.asArray()
-	stdout, err := cmd.StdoutPipe()
-	if err != nil {
-		log.Fatal(err)
-	}
-	stderr, err := cmd.StderrPipe()
-	if err != nil {
-		log.Fatal(err)
-	}
-	go io.Copy(os.Stdout, stdout)
-	go io.Copy(os.Stdout, stderr)
+	cmd.Stdin = os.Stdin
+	cmd.Stdout = os.Stdout
+	cmd.Stderr = os.Stderr
 
-	err = cmd.Start()
+	err := cmd.Start()
 	if err != nil {
 		log.Fatal(err)
 	}

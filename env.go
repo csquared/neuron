@@ -8,13 +8,14 @@ import (
 	"strings"
 
 	"github.com/coreos/go-etcd/etcd"
+	"github.com/csquared/forego/Godeps/_workspace/src/github.com/subosito/gotenv"
 )
 
 var envEntryRegexp = regexp.MustCompile("^([A-Za-z_0-9]+)=(.*)$")
 
 type Env map[string]string
 
-func getEnv(c *etcd.Client, name string) (env Env) {
+func GetEnv(c *etcd.Client, name string) (env Env) {
 	log.Printf("action=get-env name=%s\n", name)
 	resp, err := c.Get(name, false, true)
 	if err != nil {
@@ -30,6 +31,22 @@ func getEnv(c *etcd.Client, name string) (env Env) {
 	}
 
 	return
+}
+
+func ReadEnv(filename string) (Env, error) {
+	if _, err := os.Stat(filename); os.IsNotExist(err) {
+		return make(Env), nil
+	}
+	fd, err := os.Open(filename)
+	if err != nil {
+		return nil, err
+	}
+	defer fd.Close()
+	env := make(Env)
+	for key, val := range gotenv.Parse(fd) {
+		env[key] = val
+	}
+	return env, nil
 }
 
 //thanks ddollar!

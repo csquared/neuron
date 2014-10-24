@@ -12,7 +12,7 @@ func bootstrap(c *etcd.Client, language string) {
 	if err != nil {
 		log.Fatal(err)
 	}
-	_, err = c.Set("/services/"+appName+"/processes/web", "bundle exec puma $PORT", 0)
+	_, err = c.Set("/services/"+appName+"/processes/web", "bundle exec puma -p $PORT", 0)
 	if err != nil {
 		log.Fatal(err)
 	}
