@@ -1,5 +1,7 @@
 # neuron
 
+<img src="http://www.amrita.edu/sites/default/files/neuron-black-and-white-hi.png" width="300px" />
+
 a process wrapper that pulls ENV and a command from etcd, then
 watches etcd for changes and either restarts your process or exits
 gracefully
