@@ -10,25 +10,33 @@ import (
 )
 
 func Config(n *Neuron) {
-	var envDir, cmdKey, etcdUrl string
+	var procfile, envfile, envDir, cmdKey, etcdUrl string
 	var restart bool
 
+	//need this for etcd mode
+	flag.StringVar(&etcdUrl, "etcd", "http://localhost:4001", "url of etcd")
+
+	//neuron flags
 	flag.StringVar(&envDir, "env", "default", "name of env dir")
 	flag.StringVar(&cmdKey, "cmd", "", "name of cmd key")
-	flag.StringVar(&etcdUrl, "etcd", "http://localhost:4001", "url of etcd")
 	flag.BoolVar(&restart, "r", false, "restart instead of crashing")
+
+	//import flags
+	flag.StringVar(&procfile, "p", "Procfile", "procfile location for import")
+	flag.StringVar(&envfile, "e", ".env", ".env location for import")
 
 	flag.Parse()
 
 	n.Etcd = etcd.NewClient([]string{etcdUrl})
 
-	if len(os.Args) == 2 && os.Args[1] == "bootstrap" {
-		Bootstrap(n.Etcd, flag.Arg(1))
-		os.Exit(0)
-	}
-
-	if len(os.Args) == 2 && os.Args[1] == "import" {
-		Import(n.Etcd)
+	args := flag.Args()
+	if len(args) > 0 {
+		switch args[0] {
+		case "bootstrap":
+			Bootstrap(n.Etcd, flag.Arg(1))
+		case "import":
+			Import(n.Etcd, procfile, envfile)
+		}
 		os.Exit(0)
 	}
 

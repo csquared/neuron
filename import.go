@@ -8,20 +8,22 @@ import (
 	"github.com/coreos/go-etcd/etcd"
 )
 
-func Import(c *etcd.Client) {
+func Import(c *etcd.Client, procfile, envfile string) {
 	appName := appName()
 
 	_, err := c.SetDir("/services/"+appName+"/processes", 0)
 
+	fmt.Printf("action=import procfile=%s envfile=%s\n", procfile, envfile)
+
 	//add processes from procfile
-	if _, err := os.Stat("Procfile"); err == nil {
-		procfile, err := ReadProcfile("Procfile")
+	if _, err := os.Stat(procfile); err == nil {
+		procfile, err := ReadProcfile(procfile)
 		if err != nil {
 			log.Fatal(err)
 		}
 
 		for _, entry := range procfile.Entries {
-			fmt.Println("Importing", entry.Name, "process from Procfile")
+			fmt.Printf("action=import-procfile process=%s\n", entry.Name)
 			_, err = c.Set("/services/"+appName+"/processes/"+entry.Name, entry.Command, 0)
 			if err != nil {
 				log.Fatal(err)
@@ -37,14 +39,14 @@ func Import(c *etcd.Client) {
 	}
 
 	//add dev env from .env file
-	if _, err := os.Stat(".env"); err == nil {
-		env, err := ReadEnv(".env")
+	if _, err := os.Stat(envfile); err == nil {
+		env, err := ReadEnv(envfile)
 		if err != nil {
 			log.Fatal(err)
 		}
 
 		for key, value := range env {
-			fmt.Println("Importing", key, "from .env")
+			fmt.Printf("action=import-env-var key=%s\n", key)
 			_, err = c.Set("/services/"+appName+"/envs/dev/"+key, value, 0)
 			if err != nil {
 				log.Fatal(err)
