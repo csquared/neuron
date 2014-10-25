@@ -13,17 +13,17 @@ func watch(c *etcd.Client, envDir, cmdKey string) bool {
 	cmdChan := make(chan *etcd.Response)
 	go c.Watch(cmdKey, 0, false, cmdChan, nil)
 
-	log.Println("Waiting for an update...")
+	log.Println("action=wait-change")
 
-	selected := false
-	for !selected {
+WatchLoop:
+	for {
 		select {
 		case r := <-envChan:
-			log.Printf("Got updated env: %s\n", r.Node.Key)
-			selected = true
+			log.Printf("action=env-changed key=%s\n", r.Node.Key)
+			break WatchLoop
 		case r := <-cmdChan:
-			log.Printf("Got new command: %s\n", r.Node.Value)
-			selected = true
+			log.Printf("action=cmd-changed cmd=\"%s\"\n", r.Node.Value)
+			break WatchLoop
 		}
 	}
 	return true

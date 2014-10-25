@@ -22,14 +22,17 @@ func GetEnv(c *etcd.Client, name string) (env Env) {
 		log.Fatal(err)
 	}
 
-	env = make(Env, len(resp.Node.Nodes))
-	for _, n := range resp.Node.Nodes {
+	size := len(resp.Node.Nodes)
+	env = make(Env, size)
+	keys := make([]string, size)
+	for i, n := range resp.Node.Nodes {
 		cutpoint := strings.LastIndex(n.Key, "/") + 1
 		key := n.Key[cutpoint:]
 		env[key] = n.Value
-		log.Printf("%s: %s\n", key, n.Value)
+		keys[i] = key
 	}
 
+	log.Printf("action=get-env got-keys=%s\n", strings.Join(keys, ","))
 	return
 }
 
