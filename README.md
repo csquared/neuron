@@ -3,6 +3,13 @@
 <img src="http://www.amrita.edu/sites/default/files/neuron-black-and-white-hi.png" width="300px" />
 
 ```
+
+a process wrapper that pulls ENV and a command from etcd, then
+watches etcd for changes and either restarts your process or exits
+gracefully
+
+your process is the nucleus
+
 > neuron
    ____  ___  __  ___________  ____
   / __ \/ _ \/ / / / ___/ __ \/ __ \
@@ -18,22 +25,15 @@ Usage of neuron:
   -r=false: restart instead of crashing
 ```
 
-a process wrapper that pulls ENV and a command from etcd, then
-watches etcd for changes and either restarts your process or exits
-gracefully
-
-your process is the nucleus
-
 Given the following data in etcd:
 
     /services/foo-service/envs/dev/PORT = "5000"
     /services/foo-service/envs/dev/DATABASE_URL = "postgres:///foo-service"
     /services/foo-service/processes/web = "bundle exec puma -p $PORT -w 2 -t 12:16"
 
-
 A call to
 
-    neuron -env=dev -cmd=web
+    > neuron -env=dev -cmd=web
 
 in the directory `foo-service` is like calling:
 
