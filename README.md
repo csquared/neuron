@@ -2,12 +2,26 @@
 
 <img src="http://www.amrita.edu/sites/default/files/neuron-black-and-white-hi.png" width="300px" />
 
-a process wrapper that pulls ENV and a command from etcd, then
-watches etcd for changes and either restarts your process or exits
-gracefully
+`neuron` is a UNIX process wrapper that runs
+a command in an ENV, all configured in etcd.
 
-your process is the nucleus
+The envs are stored in named directories and the processes
+in specific keys.
 
+Neuron watches etcd for changes and either restarts your process or exits
+gracefully when they occur.
+
+This allows ENV or command changes
+to propagate to your running processes without deploying new code.
+
+## usage
+
+Neuron works well with 12factor apps that expect their config to come from environment.
+In development or staging, `neuron -r` can be useful to quickly react to ENV or command
+changes.
+
+In production, allowing neuron to crash your processes assumes you have a process manager
+responsible for monitoring processes.
 
 ```
 > neuron
