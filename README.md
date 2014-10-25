@@ -1,5 +1,12 @@
 # neuron
 
+```
+   ____  ___  __  ___________  ____
+  / __ \/ _ \/ / / / ___/ __ \/ __ \
+ / / / /  __/ /_/ / /  / /_/ / / / /
+/_/ /_/\___/\__,_/_/   \____/_/ /_/
+```
+
 <img src="http://www.amrita.edu/sites/default/files/neuron-black-and-white-hi.png" width="300px" />
 
 a process wrapper that pulls ENV and a command from etcd, then
@@ -8,7 +15,6 @@ gracefully
 
 your process is the nucleus
 
-
 Given the following data in etcd:
 
     /services/foo-service/envs/dev/PORT = "5000"
@@ -16,7 +22,7 @@ Given the following data in etcd:
     /services/foo-service/processes/web = "bundle exec puma -p $PORT -w 2 -t 12:16"
 
 
-A call to 
+A call to
 
     neuron -env=dev -cmd=web
 
@@ -43,13 +49,13 @@ Takes the fully qualified directory in etcd or shorthand
 
 URL of etcd
 
-### -r 
+### -r
 
 restart process - useful for development or tuning params
 
 if this is not set, neuron crashes and assumes your process
 manager will reboot it. when your system restarts the
-neuron process it will have the new ENV 
+neuron process it will have the new ENV
 
 ## other commands
 
