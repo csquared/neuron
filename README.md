@@ -5,13 +5,8 @@
 `neuron` is a UNIX process wrapper that runs
 a command in an ENV, all configured in etcd.
 
-The envs are stored in named directories and the processes
-in specific keys.
-
 Neuron watches etcd for changes and either restarts your process or exits
-gracefully when they occur.
-
-This allows ENV or command changes
+gracefully when they occur. This allows ENV or command changes
 to propagate to your running processes without deploying new code.
 
 ## usage
