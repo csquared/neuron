@@ -6,6 +6,8 @@ import (
 	"os"
 	"path/filepath"
 
+	"code.google.com/p/go-uuid/uuid"
+
 	"github.com/coreos/go-etcd/etcd"
 )
 
@@ -52,6 +54,8 @@ func Config(n *Neuron) {
 	n.Command = GetCmd(n.Etcd, cmdKey)
 	n.AppName = appName()
 	n.Restart = restart
+	n.ProcId = uuid.New()
+	n.Ttl = 5
 }
 
 func appName() string {

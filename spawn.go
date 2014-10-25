@@ -4,13 +4,30 @@ import (
 	"log"
 	"os"
 	"os/exec"
+	"os/signal"
 	"time"
 )
 
 // Spawns process and waits for
 // process to die or ENV to change
 func SpawnLoop(n *Neuron) {
-	cmd := n.Spawn()
+	n.Spawn()
+
+	c := make(chan os.Signal, 1)
+	signal.Notify(c, os.Interrupt)
+	go func() {
+		for _ = range c {
+			n.Kill()
+			os.Exit(0)
+		}
+	}()
+
+	go func() {
+		for {
+			time.Sleep(time.Duration(n.Ttl) * time.Second)
+			n.HeartBeat()
+		}
+	}()
 
 	for {
 		envChan := make(chan interface{}, 1)
@@ -22,7 +39,7 @@ func SpawnLoop(n *Neuron) {
 		}()
 		go func() {
 			log.Println("action=wait-process")
-			processKilled <- cmd.Wait()
+			processKilled <- n.Wait()
 		}()
 
 	Loop:
@@ -30,7 +47,7 @@ func SpawnLoop(n *Neuron) {
 			select {
 			case <-envChan:
 				log.Println("action=env-changed")
-				cmd.Process.Signal(os.Interrupt)
+				n.Kill()
 				break Loop
 			case <-processKilled:
 				log.Println("action=process-killed")
@@ -40,9 +57,10 @@ func SpawnLoop(n *Neuron) {
 		}
 
 		if !n.Restart {
-			os.Exit(0)
+			break
 		}
-		cmd = n.Spawn()
+		n.Wait()
+		n.Spawn()
 	}
 }
 

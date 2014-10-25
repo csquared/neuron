@@ -1,4 +1,4 @@
 neuron
 .env
 Procfile
-*.etcd
+*.etcd/
