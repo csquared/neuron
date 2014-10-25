@@ -3,10 +3,19 @@
 <img src="http://www.amrita.edu/sites/default/files/neuron-black-and-white-hi.png" width="300px" />
 
 ```
+> neuron
    ____  ___  __  ___________  ____
   / __ \/ _ \/ / / / ___/ __ \/ __ \
  / / / /  __/ /_/ / /  / /_/ / / / /
 /_/ /_/\___/\__,_/_/   \____/_/ /_/
+
+Usage of neuron:
+  -cmd="": name of cmd key
+  -e=".env": .env location for import
+  -env="default": name of env dir
+  -etcd="http://localhost:4001": url of etcd
+  -p="Procfile": procfile location for import
+  -r=false: restart instead of crashing
 ```
 
 a process wrapper that pulls ENV and a command from etcd, then
@@ -62,6 +71,14 @@ neuron process it will have the new ENV
 ### neuron import
 
 Loads Procfile and .env files into etcd
+
+#### -p
+
+Name of Procfile
+
+#### -e
+
+Name of .env file
 
 ### neuron bootstrap
 
