@@ -18,7 +18,6 @@ type Neuron struct {
 }
 
 func (n *Neuron) Spawn() exec.Cmd {
-	n.Reload()
 	n.Cmd = spawnProc(n.Env, n.Command)
 	return *n.Cmd
 }
