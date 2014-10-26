@@ -19,8 +19,8 @@ func Config(n *Neuron) {
 	flag.StringVar(&etcdUrl, "etcd", "http://localhost:4001", "url of etcd")
 
 	//neuron flags
-	flag.StringVar(&envDir, "env", "default", "name of env dir")
-	flag.StringVar(&cmdKey, "cmd", "", "name of cmd key")
+	flag.StringVar(&envDir, "env", "default", "name of env dir (ie: dev)")
+	flag.StringVar(&cmdKey, "cmd", "", "name of cmd key (ie: web)")
 	flag.BoolVar(&restart, "r", false, "restart instead of crashing")
 
 	//import flags
@@ -47,14 +47,20 @@ func Config(n *Neuron) {
 		os.Exit(1)
 	}
 
-	envDir, cmdKey = resolveKeys(envDir, cmdKey)
-	n.EnvDir = envDir
-	n.Env = GetEnv(n.Etcd, envDir)
-	n.CmdKey = cmdKey
-	n.Command = GetCmd(n.Etcd, cmdKey)
+	hostname, err := os.Hostname()
+	if err != nil {
+		log.Fatal(err)
+	}
+
 	n.AppName = appName()
-	n.Restart = restart
 	n.ProcId = uuid.New()
+	n.Hostname = hostname
+	n.EnvDir = "/services/" + n.AppName + "/envs/" + envDir
+	n.StateDir = "/services/" + n.AppName + "/running/" + n.ProcId
+	n.CmdKey = "/services/" + n.AppName + "/processes/" + cmdKey
+	n.Env = GetEnv(n.Etcd, n.EnvDir)
+	n.Command = GetCmd(n.Etcd, n.CmdKey)
+	n.Restart = restart
 	n.Ttl = 5
 }
 
@@ -65,17 +71,4 @@ func appName() string {
 	}
 
 	return filepath.Base(workingDir)
-}
-
-func resolveKeys(envDir, cmdKey string) (string, string) {
-	appName := appName()
-
-	if envDir[0] != '/' {
-		envDir = "/services/" + appName + "/envs/" + envDir
-	}
-	if cmdKey[0] != '/' {
-		cmdKey = "/services/" + appName + "/processes/" + cmdKey
-	}
-
-	return envDir, cmdKey
 }

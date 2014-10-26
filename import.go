@@ -12,6 +12,7 @@ func Import(c *etcd.Client, procfile, envfile string) {
 	appName := appName()
 
 	_, err := c.SetDir("/services/"+appName+"/processes", 0)
+	_, err = c.SetDir("/services/"+n.AppName+"/running", 0)
 
 	fmt.Printf("action=import procfile=%s envfile=%s\n", procfile, envfile)
 

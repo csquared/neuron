@@ -18,6 +18,7 @@ func SpawnLoop(n *Neuron) {
 	go func() {
 		for _ = range c {
 			n.Kill()
+			n.Wait()
 			os.Exit(0)
 		}
 	}()

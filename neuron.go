@@ -10,6 +10,7 @@ import (
 
 type Neuron struct {
 	AppName  string
+	Hostname string
 	EnvDir   string
 	Env      Env
 	CmdKey   string
@@ -45,13 +46,12 @@ func (n *Neuron) Watch() bool {
 
 func (n *Neuron) HeartBeat() {
 	if n.Ttl > 0 {
-		n.StateDir = "/services/" + n.AppName + "/running/" + n.ProcId
-		_, _ = n.Etcd.SetDir("/services/"+n.AppName+"/running", 0)
 		_, _ = n.Etcd.SetDir(n.StateDir, n.Ttl*2)
+		_, _ = n.Etcd.Set(n.StateDir+"/state", n.state, 0)
 		_, _ = n.Etcd.Set(n.StateDir+"/command", n.Command, 0)
 		_, _ = n.Etcd.Set(n.StateDir+"/cmd", n.CmdKey, 0)
 		_, _ = n.Etcd.Set(n.StateDir+"/env", n.EnvDir, 0)
-		_, _ = n.Etcd.Set(n.StateDir+"/state", n.state, 0)
+		_, _ = n.Etcd.Set(n.StateDir+"/hostname", n.Hostname, 0)
 	}
 }
 
