@@ -4,15 +4,12 @@ import (
 	"fmt"
 	"log"
 	"os"
-
-	"github.com/coreos/go-etcd/etcd"
 )
 
-func Import(c *etcd.Client, procfile, envfile string) {
-	appName := appName()
-
-	_, err := c.SetDir("/services/"+appName+"/processes", 0)
-	_, err = c.SetDir("/services/"+appName+"/running", 0)
+func Import(n *Neuron, procfile, envfile string) {
+	c := n.Etcd
+	_, err := c.SetDir("/services/"+n.AppName+"/processes", 0)
+	_, err = c.SetDir("/services/"+n.AppName+"/running", 0)
 
 	fmt.Printf("action=import procfile=%s envfile=%s\n", procfile, envfile)
 
@@ -25,7 +22,7 @@ func Import(c *etcd.Client, procfile, envfile string) {
 
 		for _, entry := range procfile.Entries {
 			fmt.Printf("action=import-procfile process=%s\n", entry.Name)
-			_, err = c.Set("/services/"+appName+"/processes/"+entry.Name, entry.Command, 0)
+			_, err = c.Set("/services/"+n.AppName+"/processes/"+entry.Name, entry.Command, 0)
 			if err != nil {
 				log.Fatal(err)
 			}
@@ -33,8 +30,8 @@ func Import(c *etcd.Client, procfile, envfile string) {
 	}
 
 	//let's import .env to dev
-	_, err = c.SetDir("/services/"+appName+"/envs/dev", 0)
-	_, err = c.Set("/services/"+appName+"/envs/dev/PORT", "5000", 0)
+	_, err = c.SetDir("/services/"+n.AppName+"/envs/dev", 0)
+	_, err = c.Set("/services/"+n.AppName+"/envs/dev/PORT", "5000", 0)
 	if err != nil {
 		log.Fatal(err)
 	}
@@ -48,7 +45,7 @@ func Import(c *etcd.Client, procfile, envfile string) {
 
 		for key, value := range env {
 			fmt.Printf("action=import-env-var key=%s\n", key)
-			_, err = c.Set("/services/"+appName+"/envs/dev/"+key, value, 0)
+			_, err = c.Set("/services/"+n.AppName+"/envs/dev/"+key, value, 0)
 			if err != nil {
 				log.Fatal(err)
 			}

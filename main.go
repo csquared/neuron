@@ -1,6 +1,10 @@
 package main
 
-import "fmt"
+import (
+	"flag"
+	"fmt"
+	"os"
+)
 
 var banner string = `
    ____  ___  __  ___________  ____
@@ -12,6 +16,29 @@ var banner string = `
 func main() {
 	fmt.Println(banner)
 	var n = &Neuron{}
+
+	var procfile, envfile string
+	//import flags
+	flag.StringVar(&procfile, "p", "Procfile", "procfile location for import")
+	flag.StringVar(&envfile, "e", ".env", ".env location for import")
+
 	Config(n)
+
+	args := flag.Args()
+	if len(args) > 0 {
+		switch args[0] {
+		case "bootstrap":
+			Bootstrap(n)
+		case "import":
+			Import(n, procfile, envfile)
+		}
+		os.Exit(0)
+	}
+
+	if n.EnvName == "" || n.CmdName == "" {
+		flag.Usage()
+		os.Exit(1)
+	}
+
 	SpawnLoop(n)
 }

@@ -1,13 +1,10 @@
 package main
 
-import (
-	"log"
+import "log"
 
-	"github.com/coreos/go-etcd/etcd"
-)
-
-func Bootstrap(c *etcd.Client, language string) {
-	appName := appName()
+func Bootstrap(n *Neuron) {
+	c := n.Etcd
+	appName := GetAppName()
 	_, err := c.SetDir("/services/"+appName+"/processes", 0)
 	if err != nil {
 		log.Fatal(err)
