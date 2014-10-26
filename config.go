@@ -12,14 +12,14 @@ import (
 )
 
 func Config(n *Neuron) {
-	var procfile, envfile, envDir, cmdKey, etcdUrl string
+	var procfile, envfile, envName, cmdKey, etcdUrl string
 	var restart bool
 
 	//need this for etcd mode
 	flag.StringVar(&etcdUrl, "etcd", "http://localhost:4001", "url of etcd")
 
 	//neuron flags
-	flag.StringVar(&envDir, "env", "default", "name of env dir (ie: dev)")
+	flag.StringVar(&envName, "env", "default", "name of env dir (ie: dev)")
 	flag.StringVar(&cmdKey, "cmd", "", "name of cmd key (ie: web)")
 	flag.BoolVar(&restart, "r", false, "restart instead of crashing")
 
@@ -42,24 +42,15 @@ func Config(n *Neuron) {
 		os.Exit(0)
 	}
 
-	if envDir == "" || cmdKey == "" {
+	if envName == "" || cmdKey == "" {
 		flag.Usage()
 		os.Exit(1)
 	}
 
-	hostname, err := os.Hostname()
-	if err != nil {
-		log.Fatal(err)
-	}
-
 	n.AppName = appName()
 	n.ProcId = uuid.New()
-	n.Hostname = hostname
-	n.EnvDir = "/services/" + n.AppName + "/envs/" + envDir
-	n.StateDir = "/services/" + n.AppName + "/running/" + n.ProcId
-	n.CmdKey = "/services/" + n.AppName + "/processes/" + cmdKey
-	n.Env = GetEnv(n.Etcd, n.EnvDir)
-	n.Command = GetCmd(n.Etcd, n.CmdKey)
+	n.EnvName = envName
+	n.CmdName = cmdKey
 	n.Restart = restart
 	n.Ttl = 5
 }

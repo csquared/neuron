@@ -2,26 +2,26 @@ package main
 
 import (
 	"fmt"
+	"log"
 	"os"
 	"os/exec"
+	"strings"
 
 	"github.com/coreos/go-etcd/etcd"
 )
 
 type Neuron struct {
-	AppName  string
-	Hostname string
-	EnvDir   string
-	Env      Env
-	CmdKey   string
-	StateDir string
-	state    string
-	Command  string
-	ProcId   string
-	Restart  bool
-	Ttl      uint64
-	Cmd      *exec.Cmd
-	Etcd     *etcd.Client
+	AppName string
+	Env     Env
+	EnvName string
+	CmdName string
+	state   string
+	Command string
+	ProcId  string
+	Restart bool
+	Ttl     uint64
+	Cmd     *exec.Cmd
+	Etcd    *etcd.Client
 }
 
 func (n *Neuron) Spawn() exec.Cmd {
@@ -40,24 +40,44 @@ func (n *Neuron) State(state string) {
 
 //blocking call for update
 func (n *Neuron) Watch() bool {
-	watch(n.Etcd, n.EnvDir, n.CmdKey)
+	watch(n.Etcd, n.EnvDir(), n.CmdKey())
 	return true
 }
 
 func (n *Neuron) HeartBeat() {
 	if n.Ttl > 0 {
-		_, _ = n.Etcd.SetDir(n.StateDir, n.Ttl*3)
-		_, _ = n.Etcd.Set(n.StateDir+"/state", n.state, 0)
-		_, _ = n.Etcd.Set(n.StateDir+"/command", n.Command, 0)
-		_, _ = n.Etcd.Set(n.StateDir+"/cmd", n.CmdKey, 0)
-		_, _ = n.Etcd.Set(n.StateDir+"/env", n.EnvDir, 0)
-		_, _ = n.Etcd.Set(n.StateDir+"/hostname", n.Hostname, 0)
+		hostname, err := os.Hostname()
+		if err != nil {
+			log.Fatal(err)
+		}
+
+		stateDir := n.StateDir()
+		_, _ = n.Etcd.SetDir(stateDir, n.Ttl*3)
+		_, _ = n.Etcd.Set(stateDir+"/state", n.state, 0)
+		_, _ = n.Etcd.Set(stateDir+"/command", n.Command, 0)
+		_, _ = n.Etcd.Set(stateDir+"/cmd", n.CmdKey(), 0)
+		_, _ = n.Etcd.Set(stateDir+"/env", n.EnvDir(), 0)
+		_, _ = n.Etcd.Set(stateDir+"/hostname", hostname, 0)
 	}
 }
 
+func (n *Neuron) EnvDir() string {
+	return "/services/" + n.AppName + "/envs/" + n.EnvName
+}
+
+func (n *Neuron) CmdKey() string {
+	t := []string{"services", n.AppName, "processes", n.CmdName}
+	return "/" + strings.Join(t, "/")
+}
+
+func (n *Neuron) StateDir() string {
+	t := []string{"services", n.AppName, "running", n.CmdName, n.ProcId}
+	return "/" + strings.Join(t, "/")
+}
+
 func (n *Neuron) Reload() {
-	n.Env = GetEnv(n.Etcd, n.EnvDir)
-	n.Command = GetCmd(n.Etcd, n.CmdKey)
+	n.Env = GetEnv(n.Etcd, n.EnvDir())
+	n.Command = GetCmd(n.Etcd, n.CmdKey())
 }
 
 func (n *Neuron) Wait() error {
