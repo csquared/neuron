@@ -35,6 +35,23 @@ Usage of neuron:
   -r=false: restart instead of crashing
 ```
 
+Run `neuron import` if you already have a `Procfile` and `.env` file:
+
+```
+~/projects/go/src/github.com/csquared/neuron (master*)$ neuron import
+
+   ____  ___  __  ___________  ____
+  / __ \/ _ \/ / / / ___/ __ \/ __ \
+ / / / /  __/ /_/ / /  / /_/ / / / /
+/_/ /_/\___/\__,_/_/   \____/_/ /_/
+
+action=import procfile=Procfile envfile=.env
+action=import-procfile process=web
+action=import-procfile process=worker
+action=import-env-var key=WEB_URL
+action=import-env-var key=FOO
+```
+
 Given the following data in etcd:
 
     /services/foo-service/envs/dev/PORT = "5000"

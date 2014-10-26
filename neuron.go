@@ -46,7 +46,7 @@ func (n *Neuron) Watch() bool {
 
 func (n *Neuron) HeartBeat() {
 	if n.Ttl > 0 {
-		_, _ = n.Etcd.SetDir(n.StateDir, n.Ttl*2)
+		_, _ = n.Etcd.SetDir(n.StateDir, n.Ttl*3)
 		_, _ = n.Etcd.Set(n.StateDir+"/state", n.state, 0)
 		_, _ = n.Etcd.Set(n.StateDir+"/command", n.Command, 0)
 		_, _ = n.Etcd.Set(n.StateDir+"/cmd", n.CmdKey, 0)

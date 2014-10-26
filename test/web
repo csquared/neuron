@@ -1,0 +1,8 @@
+#!/usr/bin/env ruby
+$stdout.sync = $stderr.sync = true
+
+require 'sinatra'
+
+get '*' do
+  'hello, neuron!'
+end

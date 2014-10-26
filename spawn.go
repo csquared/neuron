@@ -5,6 +5,7 @@ import (
 	"os"
 	"os/exec"
 	"os/signal"
+	"strings"
 	"time"
 )
 
@@ -68,7 +69,9 @@ func SpawnLoop(n *Neuron) {
 func spawnProc(env Env, command string) *exec.Cmd {
 	log.Println("action=spawn-proc")
 
-	cmd := exec.Command("/bin/sh", "-c", command)
+	command = os.Expand(command, env.Getenv)
+	cmdTokens := strings.Fields(command)
+	cmd := exec.Command(cmdTokens[0], cmdTokens[1:]...)
 	cmd.Env = env.asArray()
 	cmd.Stdin = os.Stdin
 	cmd.Stdout = os.Stdout

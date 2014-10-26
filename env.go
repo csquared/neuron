@@ -62,3 +62,26 @@ func (e *Env) asArray() (env []string) {
 	}
 	return
 }
+
+func (e Env) Getenv(s string) string {
+	return e[s]
+}
+
+/*
+func (e Env) doSubstitutions(c *etcd.Client) {
+	for key, val := range *e {
+		if strings.HasPrefix(val, "neuron+") {
+			tokens := strings.SplitAfterN(val, "://", 1)
+			firstSlash := strings.Index(tokens[0], "/")
+			name := tokens[0][:firstSlash]
+			fmt.Println(name)
+			e[key] = name
+
+			//processUrl := strings.TrimPrefix(val, "neuron+")
+			//processDir := "/services/" + appName() + "/running/"
+			//resp, err := c.Get(name, false, false)
+			//resp.Node.Value
+		}
+	}
+}
+*/

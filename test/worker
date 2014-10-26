@@ -1,0 +1,7 @@
+#!/usr/bin/env ruby
+$stdout.sync = $stderr.sync = true
+
+loop do
+	puts ENV['WEB_URL']
+	sleep 1
+end
