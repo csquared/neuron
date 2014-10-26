@@ -4,7 +4,8 @@ import "log"
 
 func Bootstrap(n *Neuron) {
 	c := n.Etcd
-	appName := GetAppName()
+	appName := n.AppName
+
 	_, err := c.SetDir("/services/"+appName+"/processes", 0)
 	if err != nil {
 		log.Fatal(err)

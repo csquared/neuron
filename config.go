@@ -19,9 +19,9 @@ func Config(n *Neuron) {
 	flag.StringVar(&etcdUrl, "etcd", "http://localhost:4001", "url of etcd")
 
 	//neuron flags
-	flag.StringVar(&appName, "app", "", "name of the app, usually the directory")
-	flag.StringVar(&envName, "env", "default", "name of env dir (ie: dev)")
-	flag.StringVar(&cmdKey, "cmd", "", "name of cmd key (ie: web)")
+	flag.StringVar(&appName, "app", GetAppName(), "name of the app, usually the directory")
+	flag.StringVar(&envName, "env", "dev", "name of env")
+	flag.StringVar(&cmdKey, "cmd", "", "name of command")
 	flag.BoolVar(&restart, "r", false, "restart instead of crashing")
 
 	flag.Parse()

@@ -36,8 +36,8 @@ func main() {
 		return
 	}
 
-	if n.EnvName == "" || n.CmdName == "" {
-		fmt.Println("You are missing the -env and/or the -cmd\n")
+	if n.CmdName == "" {
+		fmt.Println("You are missing the command: specify with -cmd\n")
 		flag.Usage()
 		os.Exit(1)
 	}
