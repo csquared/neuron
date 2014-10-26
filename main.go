@@ -22,6 +22,7 @@ func main() {
 	flag.StringVar(&procfile, "p", "Procfile", "procfile location for import")
 	flag.StringVar(&envfile, "e", ".env", ".env location for import")
 
+	//calls flag.Parse
 	Config(n)
 
 	args := flag.Args()
@@ -32,13 +33,13 @@ func main() {
 		case "import":
 			Import(n, procfile, envfile)
 		}
-		os.Exit(0)
+		return
 	}
 
 	if n.EnvName == "" || n.CmdName == "" {
+		fmt.Println("You are missing the -env and/or the -cmd\n")
 		flag.Usage()
 		os.Exit(1)
 	}
-
 	SpawnLoop(n)
 }
