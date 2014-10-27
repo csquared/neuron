@@ -18,25 +18,7 @@ changes.
 In production, allowing neuron to crash your processes assumes you have a process manager
 responsible for monitoring processes.
 
-### neuron
-
-calling neuron with no args will display usage
-
-    > neuron
-       ____  ___  __  ___________  ____
-      / __ \/ _ \/ / / / ___/ __ \/ __ \
-     / / / /  __/ /_/ / /  / /_/ / / / /
-    /_/ /_/\___/\__,_/_/   \____/_/ /_/
-
-    Usage of neuron:
-      -cmd="": name of cmd key
-      -e=".env": .env location for import
-      -env="default": name of env dir
-      -etcd="http://localhost:4001": url of etcd
-      -p="Procfile": procfile location for import
-      -r=false: restart instead of crashing
-
-### neuron import
+### `neuron import`
 
 Run `neuron import` if you already have a `Procfile` and `.env` file:
 
@@ -53,7 +35,7 @@ Run `neuron import` if you already have a `Procfile` and `.env` file:
     action=import-env-var key=WEB_URL
     action=import-env-var key=FOO
 
-### neuron <process>
+### `neuron <process>`
 
 Given the following data in etcd:
 
@@ -73,6 +55,24 @@ in that directory with an ENV of
 
     PORT="5000"
     DATABASE_URL="postgres:///foo-service"
+
+### `neuron`
+
+calling neuron with no args will display usage
+
+    > neuron
+       ____  ___  __  ___________  ____
+      / __ \/ _ \/ / / / ___/ __ \/ __ \
+     / / / /  __/ /_/ / /  / /_/ / / / /
+    /_/ /_/\___/\__,_/_/   \____/_/ /_/
+
+    Usage of neuron:
+      -cmd="": name of cmd key
+      -e=".env": .env location for import
+      -env="default": name of env dir
+      -etcd="http://localhost:4001": url of etcd
+      -p="Procfile": procfile location for import
+      -r=false: restart instead of crashing
 
 ## Heartbeat
 
