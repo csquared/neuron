@@ -3,7 +3,9 @@ package main
 import (
 	"fmt"
 	"log"
+	"net/url"
 	"os"
+	"path"
 	"regexp"
 	"strings"
 
@@ -23,14 +25,15 @@ func GetEnv(c *etcd.Client, name string) (env Env) {
 	}
 
 	size := len(resp.Node.Nodes)
-	env = make(Env, size)
 	keys := make([]string, size)
+	env = make(Env, size)
 	for i, n := range resp.Node.Nodes {
-		cutpoint := strings.LastIndex(n.Key, "/") + 1
-		key := n.Key[cutpoint:]
+		key := path.Base(n.Key)
 		env[key] = n.Value
 		keys[i] = key
 	}
+
+	env = env.doSubstitutions(c)
 
 	log.Printf("action=get-env got-keys=%s\n", strings.Join(keys, ","))
 	return
@@ -67,21 +70,54 @@ func (e Env) Getenv(s string) string {
 	return e[s]
 }
 
-/*
-func (e Env) doSubstitutions(c *etcd.Client) {
+func (e *Env) doSubstitutions(c *etcd.Client) (env Env) {
+	env = make(Env, len(*e))
 	for key, val := range *e {
+		env[key] = val
 		if strings.HasPrefix(val, "neuron+") {
-			tokens := strings.SplitAfterN(val, "://", 1)
-			firstSlash := strings.Index(tokens[0], "/")
-			name := tokens[0][:firstSlash]
-			fmt.Println(name)
-			e[key] = name
+			raw_url := strings.TrimPrefix(val, "neuron+")
+			url, err := url.Parse(raw_url)
+			if err != nil {
+				log.Println(err)
+				continue
+			}
 
-			//processUrl := strings.TrimPrefix(val, "neuron+")
-			//processDir := "/services/" + appName() + "/running/"
-			//resp, err := c.Get(name, false, false)
-			//resp.Node.Value
+			names := strings.Split(url.Host, ":")
+			var tokens []string
+			if len(names) == 1 {
+				tokens = []string{"services", GetAppName(), "running", names[0]}
+			} else {
+				tokens = []string{"services", names[0], "running", names[1]}
+			}
+			dir := "/" + strings.Join(tokens, "/")
+
+			resp, err := c.Get(dir, true, true)
+			if err != nil {
+				log.Println(err)
+				continue
+			}
+
+			n := len(resp.Node.Nodes)
+			if n != 0 {
+				i := 0
+				live := resp.Node.Nodes[i]
+
+				var hostname, port string
+				for _, node := range live.Nodes {
+					keyName := path.Base(node.Key)
+					switch keyName {
+					case "hostname":
+						hostname = node.Value
+					case "port":
+						port = node.Value
+					}
+				}
+
+				url.Host = hostname + ":" + port
+				fmt.Println(val)
+				env[key] = url.String()
+			}
 		}
 	}
+	return
 }
-*/

@@ -58,6 +58,7 @@ func (n *Neuron) HeartBeat() {
 		_, _ = n.Etcd.Set(stateDir+"/cmd", n.CmdKey(), 0)
 		_, _ = n.Etcd.Set(stateDir+"/env", n.EnvDir(), 0)
 		_, _ = n.Etcd.Set(stateDir+"/hostname", hostname, 0)
+		_, _ = n.Etcd.Set(stateDir+"/port", n.Env["PORT"], 0)
 	}
 }
 

@@ -50,7 +50,6 @@ func SpawnLoop(n *Neuron) {
 			case <-envChan:
 				log.Println("action=env-changed")
 				n.Kill()
-				break Loop
 			case <-processKilled:
 				log.Println("action=process-killed")
 				time.Sleep(1 * time.Second)
