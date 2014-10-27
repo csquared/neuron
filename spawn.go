@@ -14,12 +14,14 @@ import (
 // process to die or ENV to change
 func SpawnLoop(n *Neuron) {
 	n.Spawn()
+	mustDie := false
 
 	c := make(chan os.Signal, 1)
 	signal.Notify(c, os.Interrupt)
 	go func() {
 		for _ = range c {
 			fmt.Println("action=catch-signal")
+			mustDie = true
 			n.Kill()
 		}
 	}()
@@ -57,10 +59,9 @@ func SpawnLoop(n *Neuron) {
 			}
 		}
 
-		if !n.Restart {
+		if mustDie || !n.Restart {
 			break
 		}
-		n.Wait()
 		n.Spawn()
 	}
 }

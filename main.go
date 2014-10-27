@@ -32,8 +32,9 @@ func main() {
 			Bootstrap(n)
 		case "import":
 			Import(n, procfile, envfile)
+		default:
+			n.CmdName = args[0]
 		}
-		return
 	}
 
 	if n.CmdName == "" {

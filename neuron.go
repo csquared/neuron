@@ -11,17 +11,18 @@ import (
 )
 
 type Neuron struct {
-	AppName string
-	Env     Env
-	EnvName string
-	CmdName string
-	state   string
-	Command string
-	ProcId  string
-	Restart bool
-	Ttl     uint64
-	Cmd     *exec.Cmd
-	Etcd    *etcd.Client
+	AppName   string
+	Env       Env
+	EnvName   string
+	CmdName   string
+	state     string
+	Command   string
+	ProcId    string
+	Restart   bool
+	Ttl       uint64
+	Cmd       *exec.Cmd
+	Etcd      *etcd.Client
+	Dendrites []string
 }
 
 func (n *Neuron) Spawn() exec.Cmd {
@@ -36,12 +37,6 @@ func (n *Neuron) State(state string) {
 	n.state = state
 	fmt.Printf("action=transition state=%s\n", state)
 	n.HeartBeat()
-}
-
-//blocking call for update
-func (n *Neuron) Watch() bool {
-	watch(n.Etcd, n.EnvDir(), n.CmdKey())
-	return true
 }
 
 func (n *Neuron) HeartBeat() {
@@ -77,7 +72,7 @@ func (n *Neuron) StateDir() string {
 }
 
 func (n *Neuron) Reload() {
-	n.Env = GetEnv(n.Etcd, n.EnvDir())
+	n.LoadEnv()
 	n.Command = GetCmd(n.Etcd, n.CmdKey())
 }
 
@@ -90,4 +85,11 @@ func (n *Neuron) Wait() error {
 func (n *Neuron) Kill() {
 	n.State("killing")
 	n.Cmd.Process.Signal(os.Interrupt)
+}
+
+func (n *Neuron) LoadEnv() {
+	env := GetEnv(n.Etcd, n.EnvDir())
+	env, subs := env.doSubstitutions(n.Etcd)
+	n.Env = env
+	n.Dendrites = subs
 }

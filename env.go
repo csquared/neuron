@@ -33,8 +33,6 @@ func GetEnv(c *etcd.Client, name string) (env Env) {
 		keys[i] = key
 	}
 
-	env = env.doSubstitutions(c)
-
 	log.Printf("action=get-env got-keys=%s\n", strings.Join(keys, ","))
 	return
 }
@@ -70,7 +68,7 @@ func (e Env) Getenv(s string) string {
 	return e[s]
 }
 
-func (e *Env) doSubstitutions(c *etcd.Client) (env Env) {
+func (e *Env) doSubstitutions(c *etcd.Client) (env Env, subs []string) {
 	env = make(Env, len(*e))
 	for key, val := range *e {
 		env[key] = val
@@ -91,6 +89,7 @@ func (e *Env) doSubstitutions(c *etcd.Client) (env Env) {
 			}
 			dir := "/" + strings.Join(tokens, "/")
 
+			subs = append(subs, dir)
 			resp, err := c.Get(dir, true, true)
 			if err != nil {
 				log.Println(err)
@@ -119,5 +118,6 @@ func (e *Env) doSubstitutions(c *etcd.Client) (env Env) {
 			}
 		}
 	}
+
 	return
 }

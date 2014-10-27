@@ -6,12 +6,19 @@ import (
 	"github.com/coreos/go-etcd/etcd"
 )
 
-func watch(c *etcd.Client, envDir, cmdKey string) bool {
-	envChan := make(chan *etcd.Response)
-	go c.Watch(envDir, 0, true, envChan, nil)
+func (n *Neuron) Watch() bool {
+	envDir := n.EnvDir()
+	cmdKey := n.CmdKey()
 
-	cmdChan := make(chan *etcd.Response)
-	go c.Watch(cmdKey, 0, false, cmdChan, nil)
+	envChan := make(chan *etcd.Response, 1)
+	cmdChan := make(chan *etcd.Response, 1)
+	dendriteChan := make(chan *etcd.Response, 1)
+	go n.Etcd.Watch(envDir, 0, true, envChan, nil)
+	go n.Etcd.Watch(cmdKey, 0, false, cmdChan, nil)
+	for _, dendriteDir := range n.Dendrites {
+		log.Printf("action=wait-change dir=%s\n", dendriteDir)
+		go n.Etcd.Watch(dendriteDir, 0, true, dendriteChan, nil)
+	}
 
 	log.Println("action=wait-change")
 
@@ -24,6 +31,8 @@ WatchLoop:
 		case r := <-cmdChan:
 			log.Printf("action=cmd-changed cmd=\"%s\"\n", r.Node.Value)
 			break WatchLoop
+		case r := <-dendriteChan:
+			log.Printf("action=dendrite-changed cmd=\"%s\"\n", r.Node.Key)
 		}
 	}
 	return true
