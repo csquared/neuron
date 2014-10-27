@@ -63,7 +63,7 @@ A call to
 
 in the directory `foo-service` is like calling:
 
-    /bin/sh -c "bundle exec puma -p $PORT -w 2 -t 12:16"
+    > bundle exec puma -p $PORT -w 2 -t 12:16
 
 in that directory with an ENV of
 
