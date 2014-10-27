@@ -1,6 +1,7 @@
 package main
 
 import (
+	"fmt"
 	"log"
 	"os"
 	"os/exec"
@@ -18,9 +19,8 @@ func SpawnLoop(n *Neuron) {
 	signal.Notify(c, os.Interrupt)
 	go func() {
 		for _ = range c {
+			fmt.Println("action=catch-signal")
 			n.Kill()
-			n.Wait()
-			os.Exit(0)
 		}
 	}()
 

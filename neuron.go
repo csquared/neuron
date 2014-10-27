@@ -89,5 +89,4 @@ func (n *Neuron) Wait() error {
 func (n *Neuron) Kill() {
 	n.State("killing")
 	n.Cmd.Process.Signal(os.Interrupt)
-	n.State("down")
 }
