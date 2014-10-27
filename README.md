@@ -18,38 +18,42 @@ changes.
 In production, allowing neuron to crash your processes assumes you have a process manager
 responsible for monitoring processes.
 
-```
-> neuron
-   ____  ___  __  ___________  ____
-  / __ \/ _ \/ / / / ___/ __ \/ __ \
- / / / /  __/ /_/ / /  / /_/ / / / /
-/_/ /_/\___/\__,_/_/   \____/_/ /_/
+### neuron
 
-Usage of neuron:
-  -cmd="": name of cmd key
-  -e=".env": .env location for import
-  -env="default": name of env dir
-  -etcd="http://localhost:4001": url of etcd
-  -p="Procfile": procfile location for import
-  -r=false: restart instead of crashing
-```
+calling neuron with no args will display usage
+
+    > neuron
+       ____  ___  __  ___________  ____
+      / __ \/ _ \/ / / / ___/ __ \/ __ \
+     / / / /  __/ /_/ / /  / /_/ / / / /
+    /_/ /_/\___/\__,_/_/   \____/_/ /_/
+
+    Usage of neuron:
+      -cmd="": name of cmd key
+      -e=".env": .env location for import
+      -env="default": name of env dir
+      -etcd="http://localhost:4001": url of etcd
+      -p="Procfile": procfile location for import
+      -r=false: restart instead of crashing
+
+### neuron import
 
 Run `neuron import` if you already have a `Procfile` and `.env` file:
 
-```
-~/projects/go/src/github.com/csquared/neuron (master*)$ neuron import
+    ~/projects/go/src/github.com/csquared/neuron (master*)$ neuron import
 
-   ____  ___  __  ___________  ____
-  / __ \/ _ \/ / / / ___/ __ \/ __ \
- / / / /  __/ /_/ / /  / /_/ / / / /
-/_/ /_/\___/\__,_/_/   \____/_/ /_/
+       ____  ___  __  ___________  ____
+      / __ \/ _ \/ / / / ___/ __ \/ __ \
+     / / / /  __/ /_/ / /  / /_/ / / / /
+    /_/ /_/\___/\__,_/_/   \____/_/ /_/
 
-action=import procfile=Procfile envfile=.env
-action=import-procfile process=web
-action=import-procfile process=worker
-action=import-env-var key=WEB_URL
-action=import-env-var key=FOO
-```
+    action=import procfile=Procfile envfile=.env
+    action=import-procfile process=web
+    action=import-procfile process=worker
+    action=import-env-var key=WEB_URL
+    action=import-env-var key=FOO
+
+### neuron <process>
 
 Given the following data in etcd:
 
@@ -59,7 +63,7 @@ Given the following data in etcd:
 
 A call to
 
-    > neuron -env=dev -cmd=web
+    > neuron web -env=dev 
 
 in the directory `foo-service` is like calling:
 
@@ -69,6 +73,11 @@ in that directory with an ENV of
 
     PORT="5000"
     DATABASE_URL="postgres:///foo-service"
+
+## Heartbeat
+
+In order to make your processes discoverable, any process started with neuron sends
+heartbeats to etcd
 
 ## options
 
