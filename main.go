@@ -30,8 +30,10 @@ func main() {
 		switch args[0] {
 		case "bootstrap":
 			Bootstrap(n)
+			return
 		case "import":
 			Import(n, procfile, envfile)
+			return
 		default:
 			n.CmdName = args[0]
 		}
