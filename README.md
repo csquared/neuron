@@ -1,7 +1,5 @@
 # neuron
 
-<img src="http://www.amrita.edu/sites/default/files/neuron-black-and-white-hi.png" width="300px" />
-
 `neuron` is a UNIX process wrapper that uses configuration
 in ectd to run commands and manage ENVs for production services.
 
@@ -45,7 +43,7 @@ Given the following data in etcd:
 
 A call to
 
-    > neuron web -env=dev 
+    > neuron web -env=dev
 
 in the directory `foo-service` is like calling:
 
